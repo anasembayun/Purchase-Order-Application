@@ -11,6 +11,7 @@ use App\Models\Auth\User\Traits\Ables\Rolable;
 use App\Models\Auth\User\Traits\Scopes\UserScopes;
 use App\Models\Auth\User\Traits\Relations\UserRelations;
 use Kyslik\ColumnSortable\Sortable;
+use App\Models\PurchaseOrderLine;
 
 /**
  * App\Models\Auth\User\User
@@ -90,4 +91,5 @@ class User extends Authenticatable
      * @var array
      */
     protected $dates = ['deleted_at', 'last_login'];
+
 }
