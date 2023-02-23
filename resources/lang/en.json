@@ -152,6 +152,7 @@
   "views.purchase.order.line.show.table_header_13": "Created At",
   "views.purchase.order.line.show.table_header_14": "Updated At",
   "views.admin.purchase.order.lines.edit.title": "Update Purchase Order Line",
+  "views.backend.section.navigation.menu_4_3": "Purchase Request",
   "**************************** Admin dashboard *****************": "Admin dashboard i18n",
   "views.admin.dashboard.title": "Dashboard",
   "views.admin.dashboard.count_0": "Total users",

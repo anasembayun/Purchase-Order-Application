@@ -65,11 +65,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('permissions/{user}/repeat', 'PermissionController@repeat')->name('permissions.repeat');
     Route::get('dashboard/log-chart', 'DashboardController@getLogChartData')->name('dashboard.log.chart');
     Route::get('dashboard/registration-chart', 'DashboardController@getRegistrationChartData')->name('dashboard.registration.chart');
+
+    //Product
     Route::get('product', 'PurchaseOrderController@getProductList')->name('products');
     Route::get('product/{id}', 'PurchaseOrderController@getProductShow')->name('products.show');
     Route::get('product/price/{id}', 'PurchaseOrderController@getProductPrice')->name('getPrice');
     Route::get('product/{id}/edit', 'PurchaseOrderController@getProductEdit')->name('products.edit');
     Route::get('product/{id}/destroy', 'PurchaseOrderController@getProductDestroy')->name('products.destroy');
+
+    //Purchase Order Line
     Route::get('purchase-order-lines', 'PurchaseOrderController@purchaseOrderLineList')->name('purchase.order.lines');
     Route::get('purchase-order-lines/create', 'PurchaseOrderController@purchaseOrderLineCreate')->name('purchase.order.lines.create');
     Route::post('purchase-order-lines/store', 'PurchaseOrderController@purchaseOrderLineStore')->name('purchase.order.lines.store');
@@ -77,6 +81,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('purchase-order-lines/{id}/edit', 'PurchaseOrderController@purchaseOrderLineEdit')->name('purchase.order.lines.edit');
     Route::post('purchase-order-lines/{id}/update', 'PurchaseOrderController@purchaseOrderLineUpdate')->name('purchase.order.lines.update');
     Route::get('purchase-order-lines/{id}/destroy', 'PurchaseOrderController@purchaseOrderLineDestroy')->name('purchase.order.lines.destroy');
+
+    //Purchase Request
+    Route::get('purchase-request', 'PurchaseOrderController@purchaseRequestList')->name('purchase.request');
+    Route::get('purchase-request/create', 'PurchaseOrderController@purchaseRequestCreate')->name('purchase.request.create');
+    Route::post('purchase-request/store', 'PurchaseOrderController@purchaseRequestStore')->name('purchase.request.store');
+    Route::get('purchase-request/{id}', 'PurchaseOrderController@purchaseRequestShow')->name('purchase.request.show');
+    Route::get('purchase-request/{id}/edit', 'PurchaseOrderController@purchaseRequestEdit')->name('purchase.request.edit');
+    Route::post('purchase-request/{id}/update', 'PurchaseOrderController@purchaseRequestUpdate')->name('purchase.request.update');
+    Route::get('purchase-request/{id}/destroy', 'PurchaseOrderController@purchaseRequestDestroy')->name('purchase.request.destroy');
 });
 
 

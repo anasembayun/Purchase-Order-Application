@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\PurchaseOrderLine;
+use App\Models\PurchaseRequest;
 use App\Models\Auth\User\User;
 use Validator;
 use \DateTime;
@@ -76,8 +77,9 @@ class PurchaseOrderController extends Controller
         $purchaseOrderLine->price = $request->post('price');
         $purchaseOrderLine->discount = $request->post('discount');
         $purchaseOrderLine->ppn = $request->post('ppn');
-        $purchaseOrderLine->total = (int)$request->post('qty') * (int)$request->post('price') - ((int)$request->post('discount')/100 * (int)$request->post('price'));
-        $purchaseOrderLine->ppn_nominal = (int)$request->post('ppn')/100 * (int)$purchaseOrderLine->total;
+        $total_price = (int)$request->post('qty') * (int)$request->post('price') - ((int)$request->post('discount')/100 * (int)$request->post('price'));
+        $purchaseOrderLine->ppn_nominal = (int)$request->post('ppn')/100 * (int)$total_price;
+        $purchaseOrderLine->total = (int)$total_price + (int)$purchaseOrderLine->ppn_nominal;
         $purchaseOrderLine->status = $request->post('status');
         $purchaseOrderLine->created_at = new DateTime();
         $purchaseOrderLine->updated_at = new DateTime();
@@ -99,21 +101,21 @@ class PurchaseOrderController extends Controller
     }
 
     public function purchaseOrderLineUpdate(Request $request, $id){
-        // $validator = Validator::make($request->all(),[
-        //     'date' => 'required',
-        //     'date_required' => 'required',
-        //     'invoice_number' => 'required',
-        //     'vendor_id' => 'required',
-        //     'user_id' => 'required',
-        //     'product' => 'required',
-        //     'qty' => 'required',
-        //     'price' => 'required',
-        //     'discount' => 'required',
-        //     'ppn' => 'required',
-        //     'status' => 'required',
-        // ]);
+        $validator = Validator::make($request->all(),[
+            'date' => 'required',
+            'date_required' => 'required',
+            'invoice_number' => 'required',
+            'vendor_id' => 'required',
+            'user_id' => 'required',
+            'product' => 'required',
+            'qty' => 'required',
+            'price' => 'required',
+            'discount' => 'required',
+            'ppn' => 'required',
+            'status' => 'required',
+        ]);
 
-        // if ($validator->fails()) return redirect()->back()->withErrors($validator->errors());
+        if ($validator->fails()) return redirect()->back()->withErrors($validator->errors());
 
         $purchaseOrderLine = PurchaseOrderLine::find($id);
         $purchaseOrderLine->date = $request->post('date');
@@ -140,4 +142,63 @@ class PurchaseOrderController extends Controller
         $data->delete();
         return redirect()->route('admin.purchase.order.lines')->withFlashSuccess('Deleted Successfully!');
     }
+
+    public function purchaseRequestList(){
+        $purchaseRequests = PurchaseRequest::paginate(10);
+        return view('admin.purchaseRequest.index', compact('purchaseRequests'));
+    }
+
+    public function purchaseRequestCreate(){   
+        $products = Product::all();
+        $vendors = User::with('roles')->whereHas('roles', function($query) {$query->where('role_id', 1);})->get();
+        $users = User::with('roles')->whereHas('roles', function($query) {$query->where('role_id', 2);})->get();
+        return view('admin.purchaseRequest.create', compact('vendors','users','products'));
+    }
+
+    public function purchaseRequestShow($id){
+        $purchaseRequests = PurchaseRequest::find($id);
+        return view('admin.purchaseRequest.show', compact('purchaseRequests'));
+    }
+
+    public function purchaseRequestEdit($id){   
+        $purchaseRequests = PurchaseRequest::find($id);
+        $products = Product::all();
+        $vendors = User::with('roles')->whereHas('roles', function($query) {$query->where('role_id', 1);})->get();
+        $users = User::with('roles')->whereHas('roles', function($query) {$query->where('role_id', 2);})->get();
+        return view('admin.purchaseRequest.edit', compact('purchaseRequests','vendors','users','products'));
+    }
+
+    public function purchaseRequestStore(Request $request){
+        $purchaseRequests = new PurchaseRequest;
+        $purchaseRequests->date = $request->post('date');
+        $purchaseRequests->date_required = $request->post('date_required');
+        $purchaseRequests->invoice_number = $request->post('invoice_number');
+        $purchaseRequests->vendor_id = $request->post('vendor_id');
+        $purchaseRequests->user_id = $request->post('user_id');
+        $purchaseRequests->product_id = $request->post('product_id');
+        $purchaseRequests->qty = $request->post('qty');
+        $purchaseRequests->save();
+        return redirect()->route('admin.purchase.request')->withFlashSuccess('Create Successfully!');
+    }
+
+    public function purchaseRequestUpdate(Request $request, $id){
+        $purchaseRequests = PurchaseRequest::find($id);
+        $purchaseRequests->date = $request->post('date');
+        $purchaseRequests->date_required = $request->post('date_required');
+        $purchaseRequests->invoice_number = $request->post('invoice_number');
+        $purchaseRequests->vendor_id = $request->post('vendor_id');
+        $purchaseRequests->user_id = $request->post('user_id');
+        $purchaseRequests->product_id = $request->post('product_id');
+        $purchaseRequests->qty = $request->post('qty');
+        $purchaseRequests->update();
+        return redirect()->route('admin.purchase.request')->withFlashSuccess('Update Successfully!');
+    }
+
+    public function purchaseRequestDestroy($id){
+        $data = PurchaseRequest::find($id);
+        $data->delete();
+        return redirect()->route('admin.purchase.request')->withFlashSuccess('Deleted Successfully!');
+    }
+
+
 }

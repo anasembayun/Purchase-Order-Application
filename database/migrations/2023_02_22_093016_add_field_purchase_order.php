@@ -17,7 +17,7 @@ class AddFieldPurchaseOrder extends Migration
             $table->date('date');
             $table->date('date_required');
             $table->integer('user_id')->unsigned();
-            $table->string('vendor_name');
+            $table->integer('vendor_id')->unsigned();
             $table->string('invoice_number');
             $table->decimal('ppn');
             $table->decimal('ppn_nominal');

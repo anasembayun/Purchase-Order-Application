@@ -49,6 +49,12 @@
                             {{ __('views.backend.section.navigation.menu_4_2') }}
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.purchase.request') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            {{ __('views.backend.section.navigation.menu_4_3') }}
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="menu_section">
