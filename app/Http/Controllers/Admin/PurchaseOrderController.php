@@ -10,9 +10,19 @@ use App\Models\PurchaseRequest;
 use App\Models\Auth\User\User;
 use Validator;
 use \DateTime;
+use Yajra\DataTables\Facades\DataTables;
 
 class PurchaseOrderController extends Controller
 {
+    public function productIndex(Request $request)
+    {
+        if ($request->ajax()) {
+            return DataTables::of(Product::query())->toJson();
+        }
+
+        return view('admin.products.product');
+    }
+
     public function getProductList(){
         $products = Product::paginate(10);
         return view('admin.products.index', compact('products'));

@@ -39,8 +39,8 @@
                     <td>{{$purchaseRequest->invoice_number}}</td>
                     <td>{{$purchaseRequest->date}}</td>
                     <td>{{$purchaseRequest->date_required}}</td>
-                    <td>{{$purchaseRequest->user_id}}</td>
-                    <td>{{$purchaseRequest->vendor_id}}</td>
+                    <td>{{$purchaseRequest->users->name}}</td>
+                    <td>{{$purchaseRequest->vendors->name}}</td>
                     <td>{{$purchaseRequest->product_id}}</td>
                     <td>{{$purchaseRequest->qty}}</td>
                     <td>

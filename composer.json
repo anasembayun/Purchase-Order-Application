@@ -34,7 +34,8 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
         "laravelcollective/html": "^6.1.0",
-        "nesbot/carbon": "^2.66"
+        "nesbot/carbon": "^2.66",
+        "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",

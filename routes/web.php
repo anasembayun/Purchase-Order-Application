@@ -67,7 +67,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('dashboard/registration-chart', 'DashboardController@getRegistrationChartData')->name('dashboard.registration.chart');
 
     //Product
-    Route::get('product', 'PurchaseOrderController@getProductList')->name('products');
+    Route::get('product', 'PurchaseOrderController@ProductIndex')->name('products'); //with datatable
+    Route::get('product/index', 'PurchaseOrderController@getProductList')->name('products.index');//product without datatable
     Route::get('product/{id}', 'PurchaseOrderController@getProductShow')->name('products.show');
     Route::get('product/price/{id}', 'PurchaseOrderController@getProductPrice')->name('getPrice');
     Route::get('product/{id}/edit', 'PurchaseOrderController@getProductEdit')->name('products.edit');
