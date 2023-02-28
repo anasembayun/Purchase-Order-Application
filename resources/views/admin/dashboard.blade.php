@@ -33,7 +33,7 @@
     </div>
     <!-- /top tiles -->
 
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div id="log_activity" class="dashboard_graph">
 
@@ -43,7 +43,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="date_piker pull-right"
-                             style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+                            style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
                             <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
                             <span class="date_piker_label">
                                 {{ \Carbon\Carbon::now()->addDays(-6)->format('F j, Y') }} - {{ \Carbon\Carbon::now()->format('F j, Y') }}
@@ -137,11 +137,11 @@
             </div>
         </div>
 
-    </div>
+    </div> -->
     <br />
 
     <div class="row">
-        <div class="col-md-4 col-sm-4 col-xs-12">
+        <!-- <div class="col-md-4 col-sm-4 col-xs-12">
             <div id="registration_usage" class="x_panel tile fixed_height_320 overflow_hidden">
                 <div class="x_title">
                     <h2>{{  __('views.admin.dashboard.sub_title_2') }}</h2>
@@ -182,7 +182,7 @@
                                         <td>
                                             <p><i class="fa fa-square aero"></i>
                                                 <span class="tile_label">
-                                                     {{ __('views.admin.dashboard.source_0') }}
+                                                    {{ __('views.admin.dashboard.source_0') }}
                                                 </span>
                                             </p>
                                         </td>
@@ -212,7 +212,7 @@
                                         <td>
                                             <p><i class="fa fa-square grren"></i>
                                                 <span class="tile_label">
-                                                     {{ __('views.admin.dashboard.source_3') }}
+                                                    {{ __('views.admin.dashboard.source_3') }}
                                                 </span>
                                             </p>
                                         </td>
@@ -224,13 +224,116 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div> -->
+
+        <div class="col-md-6 col-sm-4 col-xs-12">
+            <div id="registration_usage" class="x_panel tile overflow_hidden">
+                <div class="x_title">
+                    <h2>Product Entry Statistics 2022</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div>
+                        <canvas id="productChart"></canvas>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>   
+        
+        <div class="col-md-6 col-sm-4 col-xs-12">
+            <div id="registration_usage" class="x_panel tile overflow_hidden">
+                <div class="x_title">
+                    <h2>Purchase Order Statistics 2022</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div>
+                        <canvas id="orderChart"></canvas>
+                    </div>
+                    
+                </div>
+            </div>
+        </div> 
     </div>
 @endsection
 
 @section('scripts')
     @parent
     {{ Html::script(mix('assets/admin/js/dashboard.js')) }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('productChart');
+                    
+        var labels = {{$months}};
+        var product = <?php echo $product; ?>;
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+            labels: labels,
+            datasets: [{
+                label: 'Month Entry Product:',
+                data: product,
+                borderWidth: 2,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    ],
+                borderColor: [
+                    'rgb(75, 192, 192)',
+                        ],
+                    }]
+                    },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                    },          
+                }
+        });
+    </script>
+    <script>
+        const ctxs = document.getElementById('orderChart');
+        var labels = {{$months}};
+        var order = <?php echo $order; ?>;
+        new Chart(ctxs, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                label: 'Month Purchase Order:',
+                data: order,
+                fill: false,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+                }]
+            },
+        });
+        </script>                             
 @endsection
 
 @section('styles')

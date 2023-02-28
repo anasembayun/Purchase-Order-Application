@@ -9,6 +9,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Routing\Route;
+use DB;
+use App\Models\Product;
+use App\Models\PurchaseOrderLine;
 
 class DashboardController extends Controller
 {
@@ -42,7 +45,21 @@ class DashboardController extends Controller
             }
         }
 
-        return view('admin.dashboard', ['counts' => $counts]);
+        $product = [];
+        $months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+
+        foreach ($months as $key => $value) {
+            $product[(int)$key] = Product::where(\DB::raw("DATE_FORMAT(created_at, '%Y-%m')"),'2022'.'-'.$value)->count();   
+        }
+
+        $order = [];
+        foreach ($months as $key => $value) {
+            $order[(int)$key] = PurchaseOrderLine::select('qty')->where(\DB::raw("DATE_FORMAT(date, '%Y-%m')"),'2022'.'-'.$value)->sum(DB::raw('qty'));
+        }
+
+        return view('admin.dashboard', ['counts' => $counts])->with('product',json_encode($product,JSON_NUMERIC_CHECK))
+        ->with('months',json_encode($months,JSON_NUMERIC_CHECK))
+        ->with('order',json_encode($order,JSON_NUMERIC_CHECK));
     }
 
 

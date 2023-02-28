@@ -2,6 +2,7 @@
 
 namespace App\Models\Auth\User;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Auth\User\Traits\Ables\Protectable;
 use App\Models\Auth\User\Traits\Attributes\UserAttributes;
 use Illuminate\Notifications\Notifiable;
@@ -53,6 +54,7 @@ use App\Models\PurchaseOrderLine;
  */
 class User extends Authenticatable
 {
+    use HasFactory;
     use Rolable,
         UserAttributes,
         UserScopes,
@@ -91,5 +93,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $dates = ['deleted_at', 'last_login'];
+
+    protected static function newFactory()
+    {
+        return new UserFactory();
+    }		
 
 }

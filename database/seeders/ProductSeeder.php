@@ -21,8 +21,8 @@ class ProductSeeder extends Seeder
                 'product_name' => $faker->sentence($nbWords = 4, $variableNbWords=true),
                 'product_code' => $faker->word,
                 'price' => $faker->randomFloat($nbMaxDecimals= NULL, $min=100000, $max=NULL),
-                'created_at' => $faker->dateTime($max='now', $timezone=null),
-                'updated_at' => $faker->dateTime($max='now', $timezone=null),
+                'created_at' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),
+                'updated_at' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),
             ]);
         }
     }
