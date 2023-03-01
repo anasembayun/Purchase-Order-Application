@@ -25,7 +25,10 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsers {
+        // We are doing this so the predefined register method does not clash with the one we just defined.
+        register as registration;
+    }
 
     /**
      * Where to redirect users after registration.
@@ -77,9 +80,11 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'google2fa_secret' => $data['google2fa_secret'],
             'password' => bcrypt($data['password']),
             'confirmation_code' => Uuid::uuid4(),
-            'confirmed' => false
+            'confirmed' => false,
+            
         ]);
 
         if (config('auth.users.default_role')) {
@@ -98,13 +103,38 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
+        
+        $google2fa = app('pragmarx.google2fa');
 
-        event(new Registered($user = $this->create($request->all())));
+        $registration_data = $request->all();
 
-        $this->guard()->login($user);
+        $registration_data['google2fa_secret'] = $google2fa->generateSecretKey();
 
-        return $this->registered($request, $user)
-            ?: redirect($this->redirectPath());
+        $request->session()->flash('registration_data',$registration_data);
+
+        $QR_Image = $google2fa->getQRCodeInline(
+            config('app.name'),
+            $registration_data['email'],
+            $registration_data['google2fa_secret']
+        );
+
+        return view('google2fa.register',['QR_Image' => $QR_Image, 'secret' => $registration_data['google2fa_secret']]);
+
+        // event(new Registered($user = $this->create($request->all())));
+
+        // $this->guard()->login($user);
+
+        // return $this->registered($request, $user)
+        //     ?: redirect($this->redirectPath());
+    }
+
+    public function completeRegistration(Request $request)
+    {      
+          // add the session data back to the request input
+        $request->merge(session('registration_data'));
+
+          // Call the default laravel authentication
+        return $this->registration($request);
     }
 
     /**

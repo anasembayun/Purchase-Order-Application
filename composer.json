@@ -23,6 +23,7 @@
         "php": ">=7.4.0",
         "albertcht/invisible-recaptcha": "^1.9",
         "arcanedev/log-viewer": "^8.0",
+        "bacon/bacon-qr-code": "^2.0",
         "creativeorange/gravatar": "^1.0",
         "davejamesmiller/laravel-breadcrumbs": "^5.2",
         "fakerphp/faker": "^1.21",
@@ -35,6 +36,7 @@
         "laravel/ui": "^3.0",
         "laravelcollective/html": "^6.1.0",
         "nesbot/carbon": "^2.66",
+        "pragmarx/google2fa-laravel": "^2.1",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {

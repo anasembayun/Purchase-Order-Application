@@ -78,14 +78,14 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password', 'active', 'confirmation_code', 'confirmed'];
+    protected $fillable = ['name', 'email', 'password', 'active', 'confirmation_code', 'confirmed','google2fa_secret'];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token','google2fa_secret'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -94,9 +94,12 @@ class User extends Authenticatable
      */
     protected $dates = ['deleted_at', 'last_login'];
 
-    protected static function newFactory()
-    {
-        return new UserFactory();
-    }		
+	public function setGoogle2faSecretAttribute($value){
+        $this->attributes['google2fa_secret'] = encrypt($value);
+    }
+
+    public function getGoogle2faSecretAttribute($value){
+        return decrypt($value);
+    }
 
 }
