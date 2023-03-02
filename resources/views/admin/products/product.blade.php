@@ -4,9 +4,17 @@
 
 @section('content')
 <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-primary mr-5" data-toggle="modal" data-target="#importExcel">
+                Import Excel
+            </button>
+            <a href="{{route('admin.products.export')}}" class="btn btn-primary">Excel Formula</a>
+        </div>
+    </div>
         <table class="table table-bordered" id="products-table">
             <thead>
-                <tr>
+                <tr> 
                     <th>Id</th>
                     <th>Product Name</th>
                     <th>Product Code</th>
@@ -16,6 +24,31 @@
                 </tr>
             </thead>
         </table>
+        
+        <!-- Import Excel -->
+		<div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<form method="post" action="{{route('admin.products.import')}}" enctype="multipart/form-data">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+						</div>
+						<div class="modal-body">
+							{{ csrf_field() }}
+							<label>Pilih file excel</label>
+							<div class="form-group">
+								<input type="file" name="uploaded_file" required="required">
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary">Import</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
     </div>
 @endsection
 @section('styles')
@@ -42,7 +75,7 @@
                 serverSide: true,
                 dom: 'Bfrtip',
                     buttons: [
-                        'copy', 'csv', 'excel', 'pdf', 'print','colvis'
+                        'copy', 'csv', 'excel', 'pdf', 'print','colvis',
                     ],
                 ajax: '{!! route('admin.products') !!}',
                 

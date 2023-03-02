@@ -11,8 +11,13 @@ use App\Models\Auth\User\User;
 use Validator;
 use \DateTime;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class PurchaseOrderController extends Controller
+class PurchaseOrderController extends Controller 
 {
     public function productIndex(Request $request)
     {
@@ -21,6 +26,84 @@ class PurchaseOrderController extends Controller
         }
 
         return view('admin.products.product');
+    }
+
+    public function ProductImport(Request $request){
+        $this->validate($request, [
+            'uploaded_file' => 'required|file|mimes:xls,xlsx'
+        ]);
+        $the_file = $request->file('uploaded_file');
+        try{
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet        = $spreadsheet->getActiveSheet();
+            $row_limit    = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range    = range( 2, $row_limit );
+            $column_range = range( 'F', $column_limit );
+            $startcount = 2;
+            $data = array();
+            foreach ( $row_range as $row ) {
+                $data[] = [
+                    'id' =>$sheet->getCell( 'A' . $row )->getValue(),
+                    'product_name' => $sheet->getCell( 'B' . $row )->getValue(),
+                    'product_code' => $sheet->getCell( 'C' . $row )->getCalculatedValue(),
+                    'price' => $sheet->getCell( 'D' . $row )->getValue(),
+                    'created_at' => $sheet->getCell( 'E' . $row )->getValue(),
+                    'updated_at' =>$sheet->getCell( 'F' . $row )->getValue(),
+                ];
+                $startcount++;
+            }
+            DB::table('products')->insert($data);
+        } catch (Exception $e) {
+            $error_code = $e->errorInfo[1];
+            return back()->withErrors('There was a problem uploading the data!');
+        }
+        return back()->withFlashSuccess('Great! Data has been successfully uploaded.');
+    }
+
+    public function ExportExcel($product_data){
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '4000M');
+        try {
+            $spreadSheet = new Spreadsheet();
+            $spreadSheet->getActiveSheet()->getDefaultColumnDimension()->setWidth(20);
+            $spreadSheet->getActiveSheet()->fromArray($product_data);
+
+            for ($i=2; $i<51; $i++) {
+                $spreadSheet->getActiveSheet()
+                ->setCellValue('C' . $i, '=CHAR(RANDBETWEEN(65,90))&CHAR(RANDBETWEEN(65,90))&CHAR(RANDBETWEEN(65,90))&RANDBETWEEN(100,99999)');
+            }
+
+            $Excel_writer = new Xlsx($spreadSheet);
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="Product_ExportedData.xlsx"');
+            header('Cache-Control: max-age=0');
+            ob_end_clean();
+            $Excel_writer->save('php://output');
+            exit();
+        } catch (Exception $e) {
+            return;
+        }
+    }
+    /**
+     *This function loads the data from the database then converts it
+     * into an Array that will be exported to Excel
+     */
+    public function ProductExport(){
+        $data = DB::table('products')->orderBy('id', 'ASC')->get();
+        $data_array [] = array("id","product_name","product_code","price","created_at","updated_at");
+        foreach($data as $data_item)
+        {
+            $data_array[] = array(
+                'id' =>$data_item->id,
+                'product_name' =>$data_item->product_name,
+                'product_code' => $data_item->product_code,
+                'price' => $data_item->price,
+                'created_at' => $data_item->created_at,
+                'updated_at' => $data_item->updated_at,
+            );
+        }
+        $this->ExportExcel($data_array);
     }
 
     public function getProductList(){

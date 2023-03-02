@@ -69,6 +69,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     //Product
     Route::get('product', 'PurchaseOrderController@ProductIndex')->name('products'); //with datatable
     Route::get('product/index', 'PurchaseOrderController@getProductList')->name('products.index');//product without datatable
+    Route::post('product/import', 'PurchaseOrderController@ProductImport')->name('products.import');
+    Route::get('product/export', 'PurchaseOrderController@ProductExport')->name('products.export');
     Route::get('product/{id}', 'PurchaseOrderController@getProductShow')->name('products.show');
     Route::get('product/price/{id}', 'PurchaseOrderController@getProductPrice')->name('getPrice');
     Route::get('product/{id}/edit', 'PurchaseOrderController@getProductEdit')->name('products.edit');
