@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
             \DB::table("products")->insert([
                 'product_name' => $faker->sentence($nbWords = 4, $variableNbWords=true),
                 'product_code' => $faker->word,
-                'price' => $faker->randomFloat($nbMaxDecimals= NULL, $min=100000, $max=NULL),
+                'price' => $faker->randomFloat($nbMaxDecimals= NULL, $min=45000, $max=10000000),
                 'created_at' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),
                 'updated_at' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = 'now'),
             ]);

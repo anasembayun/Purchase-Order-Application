@@ -9,10 +9,10 @@
     </div>
 </div>
 <br>
-<div class="col-md-12">
+<div class="col-md-6">
     <div id="registration_usage" class="x_panel tile overflow_hidden">
         <div class="x_title">
-            <h2>Product Entry Statistics 2022</h2>
+            <h2>Expenses</h2>
             <ul class="nav navbar-right panel_toolbox">
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                 </li>
@@ -28,12 +28,8 @@
         </div>
         <div class="x_content">
             <div>
-                <canvas id="myChart"></canvas>
-              </div>
-              
-              
-              
-            
+                <canvas id="canvas"></canvas>
+            </div>
         </div>
     </div>
 </div> 
@@ -51,29 +47,50 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript" src="https://pivottable.js.org/dist/pivot.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-              
+    
     <script>
-      const ctx = document.getElementById('myChart');
-      var data = {{$products_2021}};
+        var jsonfile = <?php echo $datas; ?>;
+        var labels = jsonfile.duasatu.months.map(function(e) {
+        return e.month;
+        });
+        var data_2021 = jsonfile.duasatu.months.map(function(e) {
+        return e.total;
+        });
+        var data_2022 = jsonfile.duadua.months.map(function(e) {
+        return e.total;
+        });
+        var data_2023 = jsonfile.duatiga.months.map(function(e) {
+        return e.total;
+        });
 
-      new Chart(ctx, {
-        type: 'bar',
+        var ctx = canvas.getContext('2d');
+        var config = {
+        type: 'line',
         data: {
-            labels: ['1','2','3','4','5','6','7'],
-    datasets: [{
-        data: data
-    }]
-},
-options: {
-    responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: false
-                    }
-                    },          
-                }
-}
-      });
+            labels: labels,
+            datasets: [{
+                label: '2021',
+                data: data_2021,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            },
+            {
+                label: '2022',
+                data: data_2022,
+                borderColor: 'rgb(54, 162, 235)',
+                tension: 0.1
+            },
+            {
+                label: '2023',
+                data: data_2023,
+                borderColor: 'rgb(255, 205, 86)',
+                tension: 0.1
+            }
+        ]
+        }
+        };
+
+        var chart = new Chart(ctx, config);
     </script>
     <script>
         $('input[name="dates"]').daterangepicker();

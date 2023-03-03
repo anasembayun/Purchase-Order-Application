@@ -287,7 +287,7 @@
     <script>
         const ctx = document.getElementById('productChart');
                     
-        var labels = {{$months}};
+        var labels = <?php echo $month; ?>;
         var product = <?php echo $product; ?>;
 
         new Chart(ctx, {
@@ -318,7 +318,7 @@
     </script>
     <script>
         const ctxs = document.getElementById('orderChart');
-        var labels = {{$months}};
+        var labels = <?php echo $month; ?>;
         var order = <?php echo $order; ?>;
         new Chart(ctxs, {
             type: 'line',
