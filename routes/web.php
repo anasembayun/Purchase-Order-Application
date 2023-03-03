@@ -50,8 +50,18 @@ Route::group(['namespace' => 'Auth'], function () {
  */
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => 'admin'], function () {
 
-    // Dashboard
+    //Dashboard
     Route::get('/', 'DashboardController@index')->name('dashboard');
+
+    //Reporting
+    Route::get('/reporting', 'DashboardController@reportIndex')->name('reporting');
+    Route::get('report/product-price-grouping','DashboardController@getProductPriceGrouping')->name('report.product.price.grouping');
+    Route::get('report/product-all-data', 'DashboardController@getDataAllProducts')->name('report.product.all.data');
+
+    //Report
+    Route::get('/report', 'DashboardController@getReport')->name('report');
+    Route::get('report/product-price', 'DashboardController@getAllProductPrice')->name('report.product.price');
+    
 
     //Users
     Route::get('users', 'UserController@index')->name('users');

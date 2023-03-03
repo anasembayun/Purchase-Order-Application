@@ -155,6 +155,8 @@
   "views.backend.section.navigation.menu_4_3": "Purchase Request",
   "**************************** Admin dashboard *****************": "Admin dashboard i18n",
   "views.admin.dashboard.title": "Dashboard",
+  "views.backend.section.navigation.menu_0_2":"Reporting",
+  "views.backend.section.navigation.menu_0_3":"Report",
   "views.admin.dashboard.count_0": "Total users",
   "views.admin.dashboard.count_1": "Verified/Non-verified users",
   "views.admin.dashboard.count_2": "Active/Inactive users",

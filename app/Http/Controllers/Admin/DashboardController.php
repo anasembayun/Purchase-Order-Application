@@ -123,4 +123,230 @@ class DashboardController extends Controller
 
         return response($data);
     }
+
+    public function reportIndex(){
+        $products = Product::all();
+        return view('admin.reporting',compact('products'));
+    }
+
+    public function getAllDataProduct(){
+        $products = Product::all();
+        return response($products);
+    }
+
+    public function getProductPriceGrouping(){
+    $less_50000 = Product::where('price', '>=', '0')->where('price', '<=', '50000')->count();
+    $_50000_99999 = Product::where('price', '>', '50000')->where('price', '<=', '99999')->count();
+    $_100000_999999 = Product::where('price', '>=', '100000')->where('price', '<=', '999999')->count();
+    $more_than_equal_1000000 = Product::where('price', '>=', '1000000')->count();
+    $data = [
+        'less_50000' => $less_50000,
+        '_50000_99999' => $_50000_99999,
+        '_100000_999999' => $_100000_999999,
+        'more_than_equal_1000000' => $more_than_equal_1000000
+    ];
+    return response($data);
+    }
+
+    public function getDataAllProducts(){
+        $products = Product::all();
+        for ($i=0; $i<count($products); $i++){
+            if ($products[$i]["price"] <= 50000){
+                $products[$i]['price_range'] = 'less_50000';
+            }else if ($products[$i]["price"] > 50000 && $products[$i]["price"] <= 99999){
+                $products[$i]['price_range'] = '_50000_99999';
+            }else if ($products[$i]["price"] > 100000 && $products[$i]["price"] <= 999999){
+                $products[$i]['price_range'] = '_100000_999999';
+            }else{
+                $products[$i]['price_range'] = 'more_than_equal_1000000';
+            }
+            $products[$i]['created_range'] = substr($products[$i]['created_at'],0,7);
+        }
+        return response($products);
+    }
+
+    public function getReport(){ 
+        $products_2021 = [];
+        $products_2022 = [];
+        $products_2023 = [];
+        $months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+        $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $product_2021_arr = [];
+        $product_2022_arr = [];
+        $product_2023_arr = [];
+
+        //2021
+        $_2021 = Product::whereYear('created_at', '=', '2021')->sum(DB::raw('price'));
+        
+        $product_2021 = Product::whereYear('created_at', '=', '2021')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+        foreach ($product_2021 as $key => $value) {
+            $products_2021[(int)$key] = ($value)->sum(DB::raw('price'));
+        }
+
+        for ($i = 1; $i <= 12; $i++) {
+            if (!empty($products_2021[$i])) {
+                $product_2021_arr[$i]['total'] = $products_2021[$i];
+            } else {
+                $product_2021_arr[$i]['total'] = 0;
+            }
+            $product_2021_arr[$i]['month'] = $month[$i - 1];
+        }
+
+        //2022
+        $_2022 = Product::whereYear('created_at', '=', '2022')->sum(DB::raw('price'));
+
+        $product_2022 = Product::whereYear('created_at', '=', '2022')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+        foreach ($product_2022 as $key => $value) {
+            $products_2022[(int)$key] = ($value)->sum(DB::raw('price'));
+        }
+
+        for ($i = 1; $i <= 12; $i++) {
+            if (!empty($products_2022[$i])) {
+                $product_2022_arr[$i]['total'] = $products_2022[$i];
+            } else {
+                $product_2022_arr[$i]['total'] = 0;
+            }
+            $product_2022_arr[$i]['month'] = $month[$i - 1];
+        }
+
+        //2023
+        $_2023 = Product::whereYear('created_at', '=', '2023')->sum(DB::raw('price'));
+        $product_2023 = Product::whereYear('created_at', '=', '2023')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+        foreach ($product_2023 as $key => $value) {
+            $products_2023[(int)$key] = ($value)->sum(DB::raw('price'));
+        }
+
+        for ($i = 1; $i <= 12; $i++) {
+            if (!empty($products_2023[$i])) {
+                $product_2023_arr[$i]['total'] = $products_2023[$i];
+            } else {
+                $product_2023_arr[$i]['total'] = 0;
+            }
+            $product_2023_arr[$i]['month'] = $month[$i - 1];
+        }
+
+        $data = [
+            '2021' => [
+                'year' => $_2021,
+                'months' =>$product_2021_arr,
+            ],
+            '2022' => [
+                'year' => $_2022,
+                'months' =>$product_2022_arr,
+            ],
+            '2023' => [
+                'year' => $_2023,
+                'months' =>$product_2023_arr,
+            ],
+            
+        ];
+
+        
+        return view('admin.report')->with('products_2021',json_encode($products_2021));
+    }
+
+    public function getAllProductPrice(){
+        $products_2021 = [];
+        $products_2022 = [];
+        $products_2023 = [];
+        $months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+        $month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $product_2021_arr = [];
+        $product_2022_arr = [];
+        $product_2023_arr = [];
+
+        //2021
+        $_2021 = Product::whereYear('created_at', '=', '2021')->sum(DB::raw('price'));
+        
+        $product_2021 = Product::whereYear('created_at', '=', '2021')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+        foreach ($product_2021 as $key => $value) {
+            $products_2021[(int)$key] = ($value)->sum(DB::raw('price'));
+        }
+
+        for ($i = 1; $i <= 12; $i++) {
+            if (!empty($products_2021[$i])) {
+                $product_2021_arr[$i]['total'] = $products_2021[$i];
+            } else {
+                $product_2021_arr[$i]['total'] = 0;
+            }
+            $product_2021_arr[$i]['month'] = $month[$i - 1];
+        }
+
+        //2022
+        $_2022 = Product::whereYear('created_at', '=', '2022')->sum(DB::raw('price'));
+
+        $product_2022 = Product::whereYear('created_at', '=', '2022')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+        foreach ($product_2022 as $key => $value) {
+            $products_2022[(int)$key] = ($value)->sum(DB::raw('price'));
+        }
+
+        for ($i = 1; $i <= 12; $i++) {
+            if (!empty($products_2022[$i])) {
+                $product_2022_arr[$i]['total'] = $products_2022[$i];
+            } else {
+                $product_2022_arr[$i]['total'] = 0;
+            }
+            $product_2022_arr[$i]['month'] = $month[$i - 1];
+        }
+
+        //2023
+        $_2023 = Product::whereYear('created_at', '=', '2023')->sum(DB::raw('price'));
+        $product_2023 = Product::whereYear('created_at', '=', '2023')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+        foreach ($product_2023 as $key => $value) {
+            $products_2023[(int)$key] = ($value)->sum(DB::raw('price'));
+        }
+
+        for ($i = 1; $i <= 12; $i++) {
+            if (!empty($products_2023[$i])) {
+                $product_2023_arr[$i]['total'] = $products_2023[$i];
+            } else {
+                $product_2023_arr[$i]['total'] = 0;
+            }
+            $product_2023_arr[$i]['month'] = $month[$i - 1];
+        }
+
+        $data = [
+            '2021' => [
+                'year' => $_2021,
+                'months' =>$product_2021_arr,
+            ],
+            '2022' => [
+                'year' => $_2022,
+                'months' =>$product_2022_arr,
+            ],
+            '2023' => [
+                'year' => $_2023,
+                'months' =>$product_2023_arr,
+            ],
+            
+        ];
+
+        $product = [];
+        $months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+
+        foreach ($months as $key => $value) {
+            $product[(int)$key] = Product::where(\DB::raw("DATE_FORMAT(created_at, '%Y-%m')"),'2022'.'-'.$value)->count();   
+        }
+
+
+        return response($product );
+    }
 }

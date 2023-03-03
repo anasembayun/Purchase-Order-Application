@@ -32,6 +32,18 @@
                             {{ __('views.backend.section.navigation.menu_0_1') }}
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.reporting') }}">
+                            <i class="fa fa-home" aria-hidden="true"></i>
+                            {{ __('views.backend.section.navigation.menu_0_2') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.report') }}">
+                            <i class="fa fa-home" aria-hidden="true"></i>
+                            {{ __('views.backend.section.navigation.menu_0_3') }}
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="menu_section">
